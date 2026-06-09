@@ -92,6 +92,64 @@ export async function setViewport(page: Page, viewport: ViewportName): Promise<v
   await page.setViewportSize(VIEWPORTS[viewport]);
 }
 
+// ── Animation + image stabilisation ─────────────────────────────────────────
+
+/**
+ * Aggressively freeze all motion on the page before taking a screenshot:
+ *  - Injects CSS that sets every animation/transition duration to 0
+ *  - Pauses all Web Animations API animations
+ *  - Pauses all <video> elements
+ *  - Replaces requestAnimationFrame with a no-op so JS animation loops stop
+ */
+export async function freezeAnimations(page: Page): Promise<void> {
+  // CSS layer — covers Elementor / WP block editor animations
+  await page.addStyleTag({
+    content: `
+      *, *::before, *::after {
+        animation-duration: 0s !important;
+        animation-delay: 0s !important;
+        animation-play-state: paused !important;
+        transition-duration: 0s !important;
+        transition-delay: 0s !important;
+        scroll-behavior: auto !important;
+      }
+    `,
+  });
+
+  // JS layer — covers rAF-driven animations and Web Animations API
+  await page.evaluate(() => {
+    // Pause all WAAPI animations
+    document.getAnimations().forEach((a) => a.pause());
+    // Pause all videos
+    document.querySelectorAll('video').forEach((v) => {
+      (v as HTMLVideoElement).pause();
+    });
+    // Replace rAF so animation loops never fire another frame
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).requestAnimationFrame = () => 0;
+  });
+}
+
+/**
+ * Best-effort wait for images to finish loading.
+ * Only checks eagerly-loaded images (excludes loading="lazy" images that are
+ * off-screen and may never become .complete before the screenshot).
+ * Silently continues on timeout so lazy images never block baseline capture.
+ */
+export async function waitForImagesLoaded(page: Page, timeout = 12_000): Promise<void> {
+  try {
+    await page.waitForFunction(
+      () =>
+        Array.from(document.querySelectorAll('img'))
+          .filter((img) => img.getAttribute('loading') !== 'lazy')
+          .every((img) => img.complete),
+      { timeout }
+    );
+  } catch {
+    // Best-effort: off-screen lazy images that never load don't affect the screenshot
+  }
+}
+
 // ── Cookie/banner dismissal ──────────────────────────────────────────────────
 
 /**

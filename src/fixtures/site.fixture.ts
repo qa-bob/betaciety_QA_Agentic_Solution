@@ -10,10 +10,11 @@
  */
 
 import { test as base, expect } from '@playwright/test';
-import { loadSiteConfig, type SiteConfig } from '@types/site-config.types';
+import { loadSiteConfig, type SiteConfig } from '@site-types/site-config.types';
 import { HomePage } from '@pages/home.page';
 import { NavigationPage } from '@pages/navigation.page';
 import { ContactFormPage } from '@pages/contact.page';
+import { LegalPage } from '@pages/legal.page';
 
 // ── Fixture type definitions ─────────────────────────────────────────────────
 
@@ -26,6 +27,8 @@ export interface Fixtures {
   navigationPage: NavigationPage;
   /** ContactFormPage page object (does not auto-navigate) */
   contactPage: ContactFormPage;
+  /** LegalPage page object for Privacy Policy and Terms of Service (does not auto-navigate) */
+  legalPage: LegalPage;
 }
 
 // ── Extended test object ─────────────────────────────────────────────────────
@@ -66,6 +69,15 @@ export const test = base.extend<Fixtures>({
   contactPage: async ({ page, siteConfig }, use) => {
     const contactPage = new ContactFormPage(page, siteConfig);
     await use(contactPage);
+  },
+
+  /**
+   * legalPage — constructs LegalPage without navigating.
+   * Call navigateToPrivacyPolicy() or navigateToTermsOfService() in the test.
+   */
+  legalPage: async ({ page, siteConfig }, use) => {
+    const legalPage = new LegalPage(page, siteConfig);
+    await use(legalPage);
   },
 });
 

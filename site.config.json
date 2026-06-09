@@ -1,23 +1,17 @@
-﻿{
-    "name":  "Betaciety",
-    "url":  "https://betaciety.com",
-    "description":  "",
-    "industry":  "",
-    "hasContactForm":  true,
-    "expectedNavItems":  [
-
-                         ],
-    "viewports":  [
-                      "desktop",
-                      "mobile",
-                      "tablet"
-                  ],
-    "skipVisual":  false,
-    "skipForms":  false,
-    "auth":  {
-                 "required":  false,
-                 "loginUrl":  "",
-                 "username":  "",
-                 "password":  ""
-             }
+{
+  "name": "Betaciety",
+  "url": "https://betaciety.com",
+  "description": "Mobile app for authentic product discovery and trusted brand relationships",
+  "industry": "Consumer Tech / Mobile App",
+  "hasContactForm": false,
+  "expectedNavItems": ["Get the App"],
+  "viewports": ["desktop", "mobile", "tablet"],
+  "skipVisual": false,
+  "skipForms": true,
+  "auth": {
+    "required": false,
+    "loginUrl": "",
+    "username": "",
+    "password": ""
+  }
 }
