@@ -49,10 +49,7 @@ test.describe('Navigation @navigation', () => {
       .filter({ has: page.locator('img[src*="betaciety-logo"], img[alt*="Betaciety" i]') })
       .first();
 
-    if (await logoAnchor.count() === 0) {
-      console.warn('[navigation] Could not identify logo anchor — skipping.');
-      return;
-    }
+    test.skip(await logoAnchor.count() === 0, 'Could not identify logo anchor');
     const href = await logoAnchor.getAttribute('href');
     expect(href).not.toBeNull();
     const resolvedHref = new URL(href!, siteConfig.url).toString();
@@ -140,7 +137,8 @@ test.describe('Navigation @navigation', () => {
 
   // ── Mobile layout ────────────────────────────────────────────────────────────
 
-  test('logo is present in DOM at mobile viewport @navigation', async ({ page, siteConfig }) => {
+  test('logo is present in DOM at mobile viewport @navigation', async ({ page, siteConfig }, testInfo) => {
+    test.skip(testInfo.project.name !== 'mobile-chrome', 'Runs only in the "mobile-chrome" project');
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(siteConfig.url, { waitUntil: 'domcontentloaded' });
     // On mobile the header logo is CSS-hidden (inside collapsed hamburger menu).
