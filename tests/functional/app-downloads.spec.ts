@@ -102,7 +102,8 @@ test.describe('App Download CTAs @functional', () => {
   test('download badges are visible at mobile viewport @functional', async ({
     page,
     siteConfig,
-  }) => {
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'mobile-chrome', 'Runs only in the "mobile-chrome" project');
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(siteConfig.url, { waitUntil: 'domcontentloaded' });
     await expect(

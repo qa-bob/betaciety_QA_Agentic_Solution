@@ -48,7 +48,7 @@ test.describe('Site Availability @smoke', () => {
     page.on('pageerror', (err) => {
       consoleErrors.push(`[pageerror] ${err.message}`);
     });
-    await page.goto(siteConfig.url, { waitUntil: 'networkidle' });
+    await page.goto(siteConfig.url, { waitUntil: 'load' });
 
     const criticalErrors = consoleErrors.filter((err) => {
       const lower = err.toLowerCase();

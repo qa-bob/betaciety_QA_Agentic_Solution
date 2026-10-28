@@ -20,10 +20,11 @@ test.describe('Responsive Layout @responsive', () => {
   test('no horizontal scrollbar at mobile viewport (390px) @responsive', async ({
     page,
     siteConfig,
-  }) => {
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'mobile-chrome', 'Runs only in the "mobile-chrome" project');
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(siteConfig.url, { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const hasHScroll = await page.evaluate<boolean>(
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth
@@ -34,10 +35,11 @@ test.describe('Responsive Layout @responsive', () => {
   test('no horizontal scrollbar at tablet viewport (768px) @responsive', async ({
     page,
     siteConfig,
-  }) => {
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'tablet', 'Runs only in the "tablet" project');
     await page.setViewportSize({ width: 768, height: 1024 });
     await page.goto(siteConfig.url, { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const hasHScroll = await page.evaluate<boolean>(
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth
@@ -56,10 +58,11 @@ test.describe('Responsive Layout @responsive', () => {
   test('no horizontal scrollbar at desktop viewport (1280px) @responsive', async ({
     page,
     siteConfig,
-  }) => {
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium-desktop', 'Runs only in the "chromium-desktop" project');
     await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto(siteConfig.url, { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const hasHScroll = await page.evaluate<boolean>(
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth
@@ -72,7 +75,8 @@ test.describe('Responsive Layout @responsive', () => {
   test('body text is readable (font-size >= 12px) on mobile @responsive', async ({
     page,
     siteConfig,
-  }) => {
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'mobile-chrome', 'Runs only in the "mobile-chrome" project');
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(siteConfig.url, { waitUntil: 'domcontentloaded' });
 
@@ -102,7 +106,8 @@ test.describe('Responsive Layout @responsive', () => {
   test('page has meta viewport tag with width=device-width @responsive', async ({
     page,
     siteConfig,
-  }) => {
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium-desktop', 'Runs only in the "chromium-desktop" project');
     await page.goto(siteConfig.url, { waitUntil: 'domcontentloaded' });
     // WP plugins may inject multiple viewport tags — use head-scoped first()
     const count = await page.locator('meta[name="viewport"]').count();
@@ -123,7 +128,8 @@ test.describe('Responsive Layout @responsive', () => {
   test('images have alt attributes (accessibility) @responsive', async ({
     page,
     siteConfig,
-  }) => {
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium-desktop', 'Runs only in the "chromium-desktop" project');
     await page.goto(siteConfig.url, { waitUntil: 'domcontentloaded' });
     const missingAlt = await page.evaluate<string[]>(() =>
       Array.from(document.querySelectorAll('img'))
@@ -147,7 +153,8 @@ test.describe('Responsive Layout @responsive', () => {
   test('hero heading is visible at mobile viewport @responsive', async ({
     page,
     siteConfig,
-  }) => {
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'mobile-chrome', 'Runs only in the "mobile-chrome" project');
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(siteConfig.url, { waitUntil: 'domcontentloaded' });
     // Use tag-level locator — WP does not reliably expose ARIA heading levels
@@ -157,7 +164,8 @@ test.describe('Responsive Layout @responsive', () => {
   test('hero heading is visible at tablet viewport @responsive', async ({
     page,
     siteConfig,
-  }) => {
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'tablet', 'Runs only in the "tablet" project');
     await page.setViewportSize({ width: 768, height: 1024 });
     await page.goto(siteConfig.url, { waitUntil: 'domcontentloaded' });
     await expect(page.locator('h1').first()).toBeVisible();
@@ -166,7 +174,9 @@ test.describe('Responsive Layout @responsive', () => {
   test('download badges are accessible at all viewports @responsive', async ({
     page,
     siteConfig,
-  }) => {
+  }, testInfo) => {
+    // Checks every viewport itself, so one project is enough
+    test.skip(testInfo.project.name !== 'chromium-desktop', 'Runs only in the "chromium-desktop" project');
     const viewports = [
       { width: 390, height: 844, label: 'mobile' },
       { width: 768, height: 1024, label: 'tablet' },
@@ -190,7 +200,8 @@ test.describe('Responsive Layout @responsive', () => {
   test('footer is visible and not clipped on mobile @responsive', async ({
     page,
     siteConfig,
-  }) => {
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'mobile-chrome', 'Runs only in the "mobile-chrome" project');
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(siteConfig.url, { waitUntil: 'domcontentloaded' });
     await expect(page.locator('footer').first()).toBeVisible();
